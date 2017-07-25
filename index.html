@@ -57,12 +57,16 @@
             <td>{{person.name}}</td>
             <td>{{person.age}}岁</td>
             <td>
-                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#myModal">删除</button>
+                <button class="btn btn-sm btn-danger" data-toggle="modal" data-target="#myModal"
+                        v-on:click="currIndex=index">删除
+                </button>
             </td>
         </tr>
         <tr v-if="persons.length">
             <td colspan="4" class="text-right">
-                <button class="btn btn-danger btn-sm">删除全部</button>
+                <button class="btn btn-danger btn-sm" data-toggle="modal" data-target="#myModal"
+                        v-on:click="currIndex=-2">删除全部
+                </button>
             </td>
         </tr>
         <tr v-if="!persons.length">
@@ -71,22 +75,20 @@
         </tbody>
     </table>
 
-</div>
-<!--模态框-->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+    <!--模态框-->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" v-if="currIndex==-2">确定删除全部?</h4>
+                    <h4 class="modal-title" v-if="currIndex!=-2">确定删除全部?</h4>
+                </div>
+                <div class="modal-body">
+                    <button class="btn btn-sm btn-danger" data-dismiss="modal" v-on:click="remove()">确定</button>
+                    <button class="btn btn-sm btn-default" data-dismiss="modal">取消</button>
+                </div>
             </div>
         </div>
     </div>
@@ -98,22 +100,29 @@
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script>
-    $('#myModal').on('shown.bs.modal', function () {
-        $('#myInput').focus()
-    })
     new Vue({
         el: "#vue",
         data: {
             name: "",
             age: "",
-            persons: [
-                {name: "zhang", age: 25},
-                {name: "kai", age: 23}
-            ]
+            persons: [],
+            currIndex: "-100"
         },
         methods: {
             add: function () {
-                this.persons.push({name: this.name, age: this.age});
+                if (this.name && this.age) {
+
+                    this.persons.push({name: this.name, age: this.age});
+                }
+            },
+            remove: function () {
+                if (this.currIndex == -2) {
+                    this.persons = [];
+                }
+                else {
+                    this.persons.splice(this.currIndex, 1);
+                }
+
             }
         }
     })
